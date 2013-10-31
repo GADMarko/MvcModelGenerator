@@ -15,7 +15,8 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
 
         private static string ImplementationCodeSnippet(PropertyInfo info, string type, string nameSuffix, string additionalTag)
         {
-            string captionName = CaptionHelper.RemoveBrowseSufix(info.Name);
+            string entityName = CaptionHelper.RemoveBrowseSufix(info.DataStructure.Name);
+            string captionName = entityName + "_" + info.Name;
 
             return string.Format(@"
         " + AttributeTag.Evaluate(info) + @"
@@ -35,7 +36,7 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
             if (conceptInfo is IntegerPropertyInfo) return "int?";
             if (conceptInfo is BinaryPropertyInfo) return "byte[]";
             if (conceptInfo is BoolPropertyInfo) return "bool?";
-            if (conceptInfo is GuidPropertyInfo) return "Guid?";
+            if (conceptInfo is GuidPropertyInfo || conceptInfo is ReferencePropertyInfo) return "Guid?";
             if (conceptInfo is ShortStringPropertyInfo) return "string";
             if (conceptInfo is LongStringPropertyInfo) return "string";
             if (conceptInfo is MoneyPropertyInfo || conceptInfo is DecimalPropertyInfo) return "decimal?";

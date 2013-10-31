@@ -7,8 +7,7 @@ namespace Rhetos.MvcModelGenerator.Captions
     public class CaptionsInitialCodeGenerator : ICaptionsGeneratorPlugin
     {
         private const string CodeSnippet =
-            @"
-<?xml version=""1.0"" encoding=""utf-8""?>
+@"<?xml version=""1.0"" encoding=""utf-8""?>
 <root>
   <xsd:schema id=""root"" xmlns="""" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
     <xsd:import namespace=""http://www.w3.org/XML/1998/namespace"" />
@@ -73,9 +72,6 @@ namespace Rhetos.MvcModelGenerator.Captions
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
             codeBuilder.InsertCode(CodeSnippet);
-
-            codeBuilder.AddReferencesFromDependency(typeof(Guid));
-            codeBuilder.AddReferencesFromDependency(typeof(System.Linq.Enumerable));
         }
     }
 }
