@@ -55,7 +55,7 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
                 string dataStructureName = CaptionHelper.RemoveBrowseSufix(info.DataStructure.Name);
 
                 bool postojiUBaznomEntitetu = dslModel.Concepts.OfType<PropertyInfo>().Any(
-                    p => p.DataStructure.Name == dataStructureName && p.Name == info.Name);
+                    p => p.DataStructure.Name == dataStructureName && p.Name == info.Name && p.DataStructure.Module.Name == info.DataStructure.Module.Name);
 
                 if (!postojiUBaznomEntitetu) dodatniAtributi += @"
         [AdditionalKendoMetadata(EditFormHidden = true)]";
