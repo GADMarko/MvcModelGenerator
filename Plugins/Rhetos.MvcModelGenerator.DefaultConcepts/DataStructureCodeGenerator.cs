@@ -36,9 +36,13 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
 
         private static string ImplementationCodeSnippet(DataStructureInfo info)
         {
+            string dataStructureBezBrowsea = info.Name;
+            if (dataStructureBezBrowsea.ToLower().EndsWith("browse")) dataStructureBezBrowsea = dataStructureBezBrowsea.Substring(0, dataStructureBezBrowsea.Length - 6);
+
             return string.Format(@"
 namespace Omega.MvcModel.{0} 
 {{ 
+    [DisplayName(""{3}"")]
     public partial class {1} : Rhetos.Mvc.BaseMvcModel
     {{
         public const string Entity{1} = ""{1}"";
@@ -50,7 +54,8 @@ namespace Omega.MvcModel.{0}
     ",
                 info.Module.Name, 
                 info.Name, 
-                ClonePropertiesTag.Evaluate(info));
+                ClonePropertiesTag.Evaluate(info),
+                CaptionHelper.GetCaption(dataStructureBezBrowsea));
         }
 
         private static bool _isInitialCallMade;
