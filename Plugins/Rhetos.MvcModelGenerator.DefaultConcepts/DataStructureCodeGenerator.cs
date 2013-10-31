@@ -37,10 +37,12 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
         private static string ImplementationCodeSnippet(DataStructureInfo info)
         {
             return string.Format(@"
-namespace {0} 
+namespace Omega.MvcModel.{0} 
 {{ 
     public partial class {1} : Rhetos.Mvc.BaseMvcModel
     {{
+        public const string Entity{1} = ""{1}"";
+
         {2}
     }}
 }}

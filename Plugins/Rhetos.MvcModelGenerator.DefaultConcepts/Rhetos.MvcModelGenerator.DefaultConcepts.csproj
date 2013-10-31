@@ -57,6 +57,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MvcPropertyHelper.cs" />
+    <Compile Include="Property\ShortStringPropertyCodeGenerator.cs" />
+    <Compile Include="Property\LongStringPropertyCodeGenerator.cs" />
+    <Compile Include="Property\DatePropertyCodeGenerator.cs" />
+    <Compile Include="Property\DecimalPropertyCodeGenerator.cs" />
     <Compile Include="Property\ReferencePropertyCodeGenerator.cs" />
     <Compile Include="Tags\RegExTagCodeGenerator.cs" />
     <Compile Include="Tags\MinValueTagCodeGenerator.cs" />

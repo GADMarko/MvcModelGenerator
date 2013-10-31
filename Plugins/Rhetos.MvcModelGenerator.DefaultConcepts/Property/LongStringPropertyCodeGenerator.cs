@@ -30,15 +30,15 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
 {
     [Export(typeof(IMvcModelGeneratorPlugin))]
     [ExportMetadata(MefProvider.Implements, typeof(PropertyInfo))]
-    public class SimplePropertyCodeGenerator : IMvcModelGeneratorPlugin
+    public class LongStringPropertyCodeGenerator : IMvcModelGeneratorPlugin
     {
+        private const string LongStringFormat = @"
+            [UIHint(""StringMultiline"")]";
+
 
         private static string GetPropertyType(PropertyInfo conceptInfo)
         {
-            if (conceptInfo is IntegerPropertyInfo) return "int?";
-            if (conceptInfo is BinaryPropertyInfo) return "byte[]";
-            if (conceptInfo is BoolPropertyInfo) return "bool?";
-            if (conceptInfo is GuidPropertyInfo) return "Guid?";
+            if (conceptInfo is LongStringPropertyInfo) return "string";
             return null;
         }
 
@@ -48,7 +48,7 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
             string propertyType = GetPropertyType(info);
             if (!String.IsNullOrEmpty(propertyType) && DataStructureCodeGenerator.IsTypeSupported(info.DataStructure))
             {
-                MvcPropertyHelper.GenerateCodeForType(info, codeBuilder, propertyType);
+                MvcPropertyHelper.GenerateCodeForType(info, codeBuilder, propertyType, "", LongStringFormat);
             }
         }
 

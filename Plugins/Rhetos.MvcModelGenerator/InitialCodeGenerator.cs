@@ -58,7 +58,7 @@ using System.Web.Mvc;
 namespace Rhetos.Mvc
 {
 
-    public class BaseMvcModel
+    public partial class BaseMvcModel
     {
          public Guid ID { get; set; }
     }
