@@ -17,22 +17,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
-using Rhetos;
+using System.Configuration;
 using Rhetos.Compiler;
 using Rhetos.Dsl;
-using System.IO;
 
 namespace Rhetos.MvcModelGenerator
 {
     internal class InitialCodeGenerator : IMvcModelGeneratorPlugin
     {
-        private const string CodeSnippet =
+        private string CodeSnippet =
 @"
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
+using " + GetNamespace() + @";
 " + MvcModelGeneratorTags.Using + @"
 
 /*
@@ -131,6 +131,14 @@ namespace Rhetos.Mvc
     " + MvcModelGeneratorTags.ModuleMembers + @"
 
 ";
+
+        private static string GetNamespace()
+        {
+            string webNamespace = ConfigurationManager.AppSettings["WebNamespace"];
+            if (string.IsNullOrEmpty(webNamespace)) webNamespace = "Omega.Web.App_GlobalResources";
+
+            return webNamespace;
+        }
 
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
