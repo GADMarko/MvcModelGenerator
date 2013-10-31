@@ -4,6 +4,12 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
 {
     public class CaptionHelper
     {
+        public static string RemoveBrowseSufix(string entityName)
+        {
+            if (entityName.EndsWith("Browse")) entityName = entityName.Replace("Browse", "");
+            return entityName;
+        }
+
         public static string GetCaption(string name)
         {
             StringBuilder sb = new StringBuilder();

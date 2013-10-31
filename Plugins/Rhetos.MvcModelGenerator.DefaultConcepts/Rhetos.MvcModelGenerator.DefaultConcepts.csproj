@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CaptionHelper.cs" />
+    <Compile Include="Captions\PropertyCaptionGenerator.cs" />
     <Compile Include="MvcPropertyHelper.cs" />
     <Compile Include="Property\ShortStringPropertyCodeGenerator.cs" />
     <Compile Include="Property\LongStringPropertyCodeGenerator.cs" />

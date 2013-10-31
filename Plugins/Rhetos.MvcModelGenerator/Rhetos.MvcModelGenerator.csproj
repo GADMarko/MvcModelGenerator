@@ -64,6 +64,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Captions\CaptionsGenerator.cs" />
+    <Compile Include="Captions\CaptionsGeneratorModuleConfiguration.cs" />
+    <Compile Include="Captions\CaptionsInitialCodeGenerator.cs" />
+    <Compile Include="Captions\ICaptionsGeneratorPlugin.cs" />
     <Compile Include="IMvcModelGeneratorPlugin.cs" />
     <Compile Include="MvcModelGeneratorModuleConfiguration.cs" />
     <Compile Include="MvcModelGenerator.cs" />

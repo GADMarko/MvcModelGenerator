@@ -16,41 +16,44 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.ComponentModel.Composition;
-using System.Globalization;
-using System.Xml;
 using Rhetos.Compiler;
 using Rhetos.Dsl;
 using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.Extensibility;
-using Rhetos.MvcModelGenerator;
+using Rhetos.MvcModelGenerator.Captions;
 
-namespace Rhetos.MvcModelGenerator.DefaultConcepts
+namespace Rhetos.MvcModelGenerator.DefaultConcepts.Captions
 {
-    [Export(typeof(IMvcModelGeneratorPlugin))]
+    [Export(typeof(ICaptionsGeneratorPlugin))]
     [ExportMetadata(MefProvider.Implements, typeof(PropertyInfo))]
-    public class LongStringPropertyCodeGenerator : IMvcModelGeneratorPlugin
+    public class PropertyCaptionGenerator : ICaptionsGeneratorPlugin
     {
-        private const string LongStringFormat = @"
-        [UIHint(""StringMultiline"")]";
-
 
         private static string GetPropertyType(PropertyInfo conceptInfo)
         {
-            if (conceptInfo is LongStringPropertyInfo) return "string";
-            return null;
+            return MvcPropertyHelper.GetPropertyType(conceptInfo);
         }
 
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
             PropertyInfo info = (PropertyInfo)conceptInfo;
+            string imePropertyja = CaptionHelper.RemoveBrowseSufix(info.DataStructure.Name) + "_" + info.Name;
+            string caption = CaptionHelper.GetCaption(info.Name);
+
+            string generiraniKod =
+            @"  
+  <data name=""" + imePropertyja + @""" xml:space=""preserve"">
+    <value>" + caption + @"</value>
+  </data>";
+           
             string propertyType = GetPropertyType(info);
             if (!String.IsNullOrEmpty(propertyType) && DataStructureCodeGenerator.IsTypeSupported(info.DataStructure))
             {
-                MvcPropertyHelper.GenerateCodeForType(info, codeBuilder, propertyType, "", LongStringFormat);
+                codeBuilder.InsertCode(generiraniKod, MvcModelGeneratorTags.ModuleMembers);
             }
         }
-
     }
 }
