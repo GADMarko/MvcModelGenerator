@@ -33,14 +33,18 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
     public class ReferencePropertyCodeGenerator : IMvcModelGeneratorPlugin
     {
         private const string ReferenceFormat = @"
-        [AdditionalKendoMetadata(LookupField = ""Sifra"", LookupEntity = ""{4}"", LookupType = KendoLookupType.ComboBox)]";
+        //[AdditionalKendoMetadata(LookupField = {0}, LookupEntity = {1}, LookupType = KendoLookupType.ComboBox)]";
 
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
             ReferencePropertyInfo info = (ReferencePropertyInfo)conceptInfo;
             if (DataStructureCodeGenerator.IsTypeSupported(info.DataStructure))
             {
-                MvcPropertyHelper.GenerateCodeForType(info, codeBuilder, "Guid?", "ID", ReferenceFormat);
+                string lookupField = info.Referenced.Name + ".PropertySifra";
+                string lookupEntity = info.Referenced.Name + ".Entity" + info.Referenced.Name;
+
+                string dodatniAtribut = string.Format(ReferenceFormat, lookupField, lookupEntity);
+                MvcPropertyHelper.GenerateCodeForType(info, codeBuilder, "Guid?", "ID", dodatniAtribut);
             }
         }
 

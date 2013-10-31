@@ -33,7 +33,7 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
     public class DecimalPropertyCodeGenerator : IMvcModelGeneratorPlugin
     {
         private const string DecimalFormat = @"
-            [DisplayFormat(DataFormatString = ""{0:n}"", ApplyFormatInEditMode = true)]";
+        [DisplayFormat(DataFormatString = ""{0:n}"", ApplyFormatInEditMode = true)]";
 
 
         private static string GetPropertyType(PropertyInfo conceptInfo)
