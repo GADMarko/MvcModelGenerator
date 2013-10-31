@@ -13,13 +13,16 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
     public static class MvcPropertyHelper
     {
         public static readonly CsTag<PropertyInfo> AttributeTag = "Attribute";
+        
+        private static string EditFormHidden = @"
+        [AdditionalKendoMetadata(EditFormHidden = true)]";
 
         private static string ImplementationCodeSnippet(IDslModel dslModel, PropertyInfo info, string type, string nameSuffix, string additionalTag)
         {
             string entityName = CaptionHelper.RemoveBrowseSufix(info.DataStructure.Name);
             string captionName = entityName + "_" + info.Name;
 
-            additionalTag = SakrijPoljaDohvacenaPrekoLookupa(dslModel, info, additionalTag);
+            additionalTag = SakrijPolja(dslModel, info, additionalTag);
 
             return string.Format(@"
         " + AttributeTag.Evaluate(info) + @"
@@ -47,7 +50,25 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
             return null;
         }
 
-        public static string SakrijPoljaDohvacenaPrekoLookupa(IDslModel dslModel, PropertyInfo info, string dodatniAtributi)
+        public static string SakrijPolja(IDslModel dslModel, PropertyInfo info, string dodatniAtributi)
+        {
+            dodatniAtributi = SakrijPoljaDohvacenaPrekoLookupa(dslModel, info, dodatniAtributi);
+            dodatniAtributi = SakrijDetailPolja(dslModel, info, dodatniAtributi);
+            return dodatniAtributi;
+        }
+
+        private static string SakrijDetailPolja(IDslModel dslModel, PropertyInfo info, string dodatniAtributi)
+        {
+            bool jeDetail = dslModel.Concepts.OfType<ReferenceDetailInfo>().Any(
+                d => d.Reference.Name == info.Name
+                     && d.Reference.DataStructure.Name == info.DataStructure.Name
+                     && d.Reference.DataStructure.Module == info.DataStructure.Module);
+
+            if (jeDetail && !dodatniAtributi.Contains(EditFormHidden)) dodatniAtributi += EditFormHidden;
+            return dodatniAtributi;
+        }
+
+        private static string SakrijPoljaDohvacenaPrekoLookupa(IDslModel dslModel, PropertyInfo info, string dodatniAtributi)
         {
             bool jeBrowse = info.DataStructure.Name.EndsWith("Browse");
             if (jeBrowse)
@@ -57,8 +78,7 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
                 bool postojiUBaznomEntitetu = dslModel.Concepts.OfType<PropertyInfo>().Any(
                     p => p.DataStructure.Name == dataStructureName && p.Name == info.Name && p.DataStructure.Module.Name == info.DataStructure.Module.Name);
 
-                if (!postojiUBaznomEntitetu) dodatniAtributi += @"
-        [AdditionalKendoMetadata(EditFormHidden = true)]";
+                if (!postojiUBaznomEntitetu) dodatniAtributi += EditFormHidden;
             }
             return dodatniAtributi;
         }
