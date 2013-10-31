@@ -19,6 +19,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Globalization;
+using System.Linq;
 using System.Xml;
 using Rhetos.Compiler;
 using Rhetos.Dsl;
@@ -32,6 +33,13 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
     [ExportMetadata(MefProvider.Implements, typeof(PropertyInfo))]
     public class ShortStringPropertyCodeGenerator : IMvcModelGeneratorPlugin
     {
+        private readonly IDslModel _dslModel;
+
+        public ShortStringPropertyCodeGenerator(IDslModel dslModel)
+        {
+            _dslModel = dslModel;
+        }
+
         private const string ShortStringFormat = @"
         [MaxLength(256)]";
 
@@ -46,11 +54,11 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
         {
             PropertyInfo info = (PropertyInfo)conceptInfo;
             string propertyType = GetPropertyType(info);
+
             if (!String.IsNullOrEmpty(propertyType) && DataStructureCodeGenerator.IsTypeSupported(info.DataStructure))
             {
-                MvcPropertyHelper.GenerateCodeForType(info, codeBuilder, propertyType, "", ShortStringFormat);
+                MvcPropertyHelper.GenerateCodeForType(_dslModel, info, codeBuilder, propertyType, "", ShortStringFormat);
             }
         }
-
     }
 }

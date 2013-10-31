@@ -32,6 +32,13 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
     [ExportMetadata(MefProvider.Implements, typeof(ReferencePropertyInfo))]
     public class ReferencePropertyCodeGenerator : IMvcModelGeneratorPlugin
     {
+        private readonly IDslModel _dslModel;
+
+        public ReferencePropertyCodeGenerator(IDslModel dslModel)
+        {
+            _dslModel = dslModel;
+        }
+
         private const string ReferenceFormat = @"
         //[AdditionalKendoMetadata(LookupField = {0}, LookupEntity = {1}, LookupType = KendoLookupType.ComboBox)]";
 
@@ -44,7 +51,7 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
                 string lookupEntity = info.Referenced.Name + ".Entity" + info.Referenced.Name;
 
                 string dodatniAtribut = string.Format(ReferenceFormat, lookupField, lookupEntity);
-                MvcPropertyHelper.GenerateCodeForType(info, codeBuilder, "Guid?", "ID", dodatniAtribut);
+                MvcPropertyHelper.GenerateCodeForType(_dslModel, info, codeBuilder, "Guid?", "ID", dodatniAtribut);
             }
         }
 

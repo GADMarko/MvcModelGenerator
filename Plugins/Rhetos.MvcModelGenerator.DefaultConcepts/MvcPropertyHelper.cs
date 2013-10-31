@@ -1,4 +1,5 @@
 ﻿using Rhetos.Compiler;
+using Rhetos.Dsl;
 using Rhetos.Dsl.DefaultConcepts;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,12 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
     {
         public static readonly CsTag<PropertyInfo> AttributeTag = "Attribute";
 
-        private static string ImplementationCodeSnippet(PropertyInfo info, string type, string nameSuffix, string additionalTag)
+        private static string ImplementationCodeSnippet(IDslModel dslModel, PropertyInfo info, string type, string nameSuffix, string additionalTag)
         {
             string entityName = CaptionHelper.RemoveBrowseSufix(info.DataStructure.Name);
             string captionName = entityName + "_" + info.Name;
+
+            additionalTag = SakrijPoljaDohvacenaPrekoLookupa(dslModel, info, additionalTag);
 
             return string.Format(@"
         " + AttributeTag.Evaluate(info) + @"
@@ -26,9 +29,9 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
         ", info.Name, type, nameSuffix, captionName, additionalTag);
         }
 
-        public static void GenerateCodeForType(PropertyInfo info, ICodeBuilder codeBuilder, string type, string nameSuffix = "", string additionalTag = "")
+        public static void GenerateCodeForType(IDslModel dslModel, PropertyInfo info, ICodeBuilder codeBuilder, string type, string nameSuffix = "", string additionalTag = "")
         {
-            codeBuilder.InsertCode(ImplementationCodeSnippet(info, type, nameSuffix, additionalTag), DataStructureCodeGenerator.ClonePropertiesTag, info.DataStructure);
+            codeBuilder.InsertCode(ImplementationCodeSnippet(dslModel, info, type, nameSuffix, additionalTag), DataStructureCodeGenerator.ClonePropertiesTag, info.DataStructure);
         }
 
         public static string GetPropertyType(PropertyInfo conceptInfo)
@@ -42,6 +45,22 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
             if (conceptInfo is MoneyPropertyInfo || conceptInfo is DecimalPropertyInfo) return "decimal?";
             if (conceptInfo is DatePropertyInfo || conceptInfo is DateTimePropertyInfo) return "DateTime?";
             return null;
+        }
+
+        public static string SakrijPoljaDohvacenaPrekoLookupa(IDslModel dslModel, PropertyInfo info, string dodatniAtributi)
+        {
+            bool jeBrowse = info.DataStructure.Name.EndsWith("Browse");
+            if (jeBrowse)
+            {
+                string dataStructureName = CaptionHelper.RemoveBrowseSufix(info.DataStructure.Name);
+
+                bool postojiUBaznomEntitetu = dslModel.Concepts.OfType<PropertyInfo>().Any(
+                    p => p.DataStructure.Name == dataStructureName && p.Name == info.Name);
+
+                if (!postojiUBaznomEntitetu) dodatniAtributi += @"
+        [AdditionalKendoMetadata(EditFormHidden = true)]";
+            }
+            return dodatniAtributi;
         }
     }
 }

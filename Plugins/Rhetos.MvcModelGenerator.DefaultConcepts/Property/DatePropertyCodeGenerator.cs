@@ -35,6 +35,12 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
         private const string DateFormat = @"
         [DisplayFormat(DataFormatString = ""{0:dd.MM.yyyy.}"", ApplyFormatInEditMode = true)]";
 
+        private readonly IDslModel _dslModel;
+
+        public DatePropertyCodeGenerator(IDslModel dslModel)
+        {
+            _dslModel = dslModel;
+        }
         
         private static string GetPropertyType(PropertyInfo conceptInfo)
         {         
@@ -48,7 +54,7 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
             string propertyType = GetPropertyType(info);
             if (!String.IsNullOrEmpty(propertyType) && DataStructureCodeGenerator.IsTypeSupported(info.DataStructure))
             {
-                MvcPropertyHelper.GenerateCodeForType(info, codeBuilder, propertyType, "", DateFormat);
+                MvcPropertyHelper.GenerateCodeForType(_dslModel, info, codeBuilder, propertyType, "", DateFormat);
             }
         }
 

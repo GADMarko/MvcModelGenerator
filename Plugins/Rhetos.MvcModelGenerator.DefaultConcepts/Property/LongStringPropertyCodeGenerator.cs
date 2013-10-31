@@ -35,6 +35,13 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
         private const string LongStringFormat = @"
         [UIHint(""StringMultiline"")]";
 
+        private readonly IDslModel _dslModel;
+
+        public LongStringPropertyCodeGenerator(IDslModel dslModel)
+        {
+            _dslModel = dslModel;
+        }
+
 
         private static string GetPropertyType(PropertyInfo conceptInfo)
         {
@@ -48,7 +55,7 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
             string propertyType = GetPropertyType(info);
             if (!String.IsNullOrEmpty(propertyType) && DataStructureCodeGenerator.IsTypeSupported(info.DataStructure))
             {
-                MvcPropertyHelper.GenerateCodeForType(info, codeBuilder, propertyType, "", LongStringFormat);
+                MvcPropertyHelper.GenerateCodeForType(_dslModel, info, codeBuilder, propertyType, "", LongStringFormat);
             }
         }
 
