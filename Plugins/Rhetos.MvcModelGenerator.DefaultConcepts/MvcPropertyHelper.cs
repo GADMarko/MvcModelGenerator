@@ -82,9 +82,11 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
 
         private static string SakrijDetailPolja(IDslModel dslModel, PropertyInfo info)
         {
+            string entityName = CaptionHelper.RemoveBrowseSufix(info.DataStructure.Name);
+
             bool jeDetail = dslModel.Concepts.OfType<ReferenceDetailInfo>().Any(
                 d => d.Reference.Name == info.Name
-                     && d.Reference.DataStructure.Name == info.DataStructure.Name
+                     && d.Reference.DataStructure.Name == entityName
                      && d.Reference.DataStructure.Module.Name == info.DataStructure.Module.Name);
 
             if (jeDetail) return EditFormHidden;
