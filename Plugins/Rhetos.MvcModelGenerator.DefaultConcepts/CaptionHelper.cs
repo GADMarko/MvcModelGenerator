@@ -27,10 +27,15 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
 
         private static string GetCaptionAlias(string caption)
         {
-            caption = caption.Replace("sifra", "šifra").Replace("Sifra", "Šifra");
+            caption = caption.Replace("Sifra", "Šifra").Replace("sifra", "šifra");
             caption = caption.Replace("dj", "đ").Replace("Dj", "Đ");
             caption = caption.Replace("Active", "Aktivan");
             caption = caption.Replace("Kolicina", "Količina").Replace("kolicina", "količina");
+            caption = caption.Replace("Dobavljac", "Dobavljač").Replace("dobavljac", "dobavljač");
+            caption = caption.Replace("Drzav", "Držav").Replace("drzav", "držav");
+            caption = caption.Replace("Racun", "Račun").Replace("racun", "račun");
+            caption = caption.Replace("Narudzb", "Narudžb").Replace("narudzb", "narudžb");
+
             return caption;
         }
     }
