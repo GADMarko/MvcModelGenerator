@@ -15,7 +15,7 @@ namespace Rhetos.MvcModelGenerator.Captions
         private readonly ICodeGenerator _codeGenerator;
         private readonly ILogger _logger;
         private readonly ILogger _sourceLogger;
-        private string assemblyName = "Captions";
+        private const string CaptionFileName = "Captions";
 
         public CaptionsGenerator(
             IPluginsContainer<ICaptionsGeneratorPlugin> plugins,
@@ -36,7 +36,7 @@ namespace Rhetos.MvcModelGenerator.Captions
             _logger.Trace("References: " + string.Join(", ", assemblySource.RegisteredReferences));
             _sourceLogger.Trace(assemblySource.GeneratedCode);
 
-            File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, assemblyName + ".resx"), assemblySource.GeneratedCode.Trim());
+            File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Generated", CaptionFileName + ".resx"), assemblySource.GeneratedCode.Trim());
         }
 
         public IEnumerable<string> Dependencies
