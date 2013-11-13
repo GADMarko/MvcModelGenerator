@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Rhetos.Compiler;
 using Rhetos.Dsl;
@@ -31,6 +32,7 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts.Captions
     [ExportMetadata(MefProvider.Implements, typeof(PropertyInfo))]
     public class PropertyCaptionGenerator : ICaptionsGeneratorPlugin
     {
+        private static readonly HashSet<string> GeneriraneKonstante = new HashSet<string>();
 
         private static string GetPropertyType(PropertyInfo conceptInfo)
         {
@@ -48,11 +50,16 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts.Captions
   <data name=""" + imePropertyja + @""" xml:space=""preserve"">
     <value>" + caption + @"</value>
   </data>";
-           
-            string propertyType = GetPropertyType(info);
-            if (!String.IsNullOrEmpty(propertyType) && DataStructureCodeGenerator.IsTypeSupported(info.DataStructure))
+
+            if (!GeneriraneKonstante.Contains(imePropertyja))
             {
-                codeBuilder.InsertCode(generiraniKod, MvcModelGeneratorTags.ModuleMembers);
+                GeneriraneKonstante.Add(imePropertyja);
+
+                string propertyType = GetPropertyType(info);
+                if (!String.IsNullOrEmpty(propertyType) && DataStructureCodeGenerator.IsTypeSupported(info.DataStructure))
+                {
+                    codeBuilder.InsertCode(generiraniKod, MvcModelGeneratorTags.ModuleMembers);
+                }
             }
         }
     }
