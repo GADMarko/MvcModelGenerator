@@ -36,7 +36,11 @@ namespace Rhetos.MvcModelGenerator.Captions
             _logger.Trace("References: " + string.Join(", ", assemblySource.RegisteredReferences));
             _sourceLogger.Trace(assemblySource.GeneratedCode);
 
-            File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Generated", CaptionFileName + ".resx"), assemblySource.GeneratedCode.Trim());
+
+            var generatedCode = assemblySource.GeneratedCode.Trim();
+            generatedCode = generatedCode.Replace("/*implementation*/", "");
+
+            File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Generated", CaptionFileName + ".resx"), generatedCode);
         }
 
         public IEnumerable<string> Dependencies
