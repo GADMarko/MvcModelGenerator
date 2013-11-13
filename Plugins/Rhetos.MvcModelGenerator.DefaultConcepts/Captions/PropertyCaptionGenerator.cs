@@ -40,7 +40,7 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts.Captions
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
             PropertyInfo info = (PropertyInfo)conceptInfo;
-            string imePropertyja = CaptionHelper.RemoveBrowseSufix(info.DataStructure.Name) + "_" + info.Name;
+            string imePropertyja = CaptionHelper.GetCaptionConstant(info);
             string caption = CaptionHelper.GetCaption(info.Name);
 
             string generiraniKod =

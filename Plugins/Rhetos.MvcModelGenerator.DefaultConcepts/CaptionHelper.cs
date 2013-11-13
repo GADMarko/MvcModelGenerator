@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Rhetos.Dsl.DefaultConcepts;
 
 namespace Rhetos.MvcModelGenerator.DefaultConcepts
 {
@@ -38,6 +39,12 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
             caption = caption.Replace("Katalosk", "Katalošk").Replace("katalosk", "katalošk");
 
             return caption;
+        }
+
+        public static string GetCaptionConstant(PropertyInfo info)
+        {
+            string entityName = CaptionHelper.RemoveBrowseSufix(info.DataStructure.Name);
+            return info.DataStructure.Module.Name + "_" + entityName + "_" + info.Name;
         }
     }
 }

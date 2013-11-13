@@ -25,8 +25,7 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
 
         private static string ImplementationCodeSnippet(IDslModel dslModel, PropertyInfo info, string type, string nameSuffix, string additionalTag)
         {
-            string entityName = CaptionHelper.RemoveBrowseSufix(info.DataStructure.Name);
-            string captionName = entityName + "_" + info.Name;
+            string captionName = CaptionHelper.GetCaptionConstant(info);
 
             additionalTag = KreirajDodatneMvcAtribute(dslModel, info, additionalTag);
 
