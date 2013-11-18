@@ -37,6 +37,9 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
             caption = caption.Replace("Racun", "Račun").Replace("racun", "račun");
             caption = caption.Replace("Narudzb", "Narudžb").Replace("narudzb", "narudžb");
             caption = caption.Replace("Katalosk", "Katalošk").Replace("katalosk", "katalošk");
+            caption = caption.Replace("Oib", "OIB");
+            caption = caption.Replace("Ean", "EAN");
+            caption = caption.Replace("Jmbg", "JMBG");
 
             return caption;
         }
