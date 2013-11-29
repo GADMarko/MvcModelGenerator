@@ -71,7 +71,7 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
         private static string KreirajDefaulte(IDslModel dslModel, PropertyInfo info)
         {
             bool jeAutocode = dslModel.Concepts.OfType<AutoCodePropertyInfo>().Any(
-                p => p.Property.Name == info.Name && p.Property.DataStructure.Module.Name == info.DataStructure.Module.Name);
+                p => p.Property.Name == info.Name && p.Property.DataStructure.Module.Name == info.DataStructure.Module.Name && p.Property.DataStructure.Name == info.DataStructure.Name);
 
             if (jeAutocode) return DefaultAutocode;
 
