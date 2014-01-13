@@ -40,6 +40,7 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
             caption = caption.Replace("Oib", "OIB");
             caption = caption.Replace("Ean", "EAN");
             caption = caption.Replace("Jmbg", "JMBG");
+            caption = caption.Replace("Skladis", "Skladiš").Replace("skladis", "skladiš");
 
             return caption;
         }
