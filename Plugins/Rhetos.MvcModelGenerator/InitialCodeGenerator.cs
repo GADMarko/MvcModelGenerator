@@ -28,6 +28,7 @@ namespace Rhetos.MvcModelGenerator
         private string CodeSnippet =
 @"
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -66,7 +67,8 @@ namespace Rhetos.Mvc
 
     " + MvcModelGeneratorTags.NamespaceMembers + @"
 
-    public class MinValueIntegerAttribute : ValidationAttribute
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public sealed class MinValueIntegerAttribute : ValidationAttribute
     {
         public string MinValue { get; set; }
 
@@ -76,7 +78,8 @@ namespace Rhetos.Mvc
         }
     }
 
-    public class MinValueDecimalAttribute : ValidationAttribute
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public sealed class MinValueDecimalAttribute : ValidationAttribute
     {
         public string MinValue { get; set; }
 
@@ -86,7 +89,8 @@ namespace Rhetos.Mvc
         }
     }
 
-    public class MinValueDateAttribute : ValidationAttribute
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public sealed class MinValueDateAttribute : ValidationAttribute
     {
         public string MinValue { get; set; }
 
@@ -96,7 +100,8 @@ namespace Rhetos.Mvc
         }
     }
 
-    public class MaxValueIntegerAttribute : ValidationAttribute
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public sealed class MaxValueIntegerAttribute : ValidationAttribute
     {
         public string MaxValue { get; set; }
 
@@ -105,8 +110,9 @@ namespace Rhetos.Mvc
             return Convert.ToInt32(value) <= Convert.ToInt32(MaxValue);
         }
     }
-
-    public class MaxValueDecimalAttribute : ValidationAttribute
+    
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public sealed class MaxValueDecimalAttribute : ValidationAttribute
     {
         public string MaxValue { get; set; }
 
@@ -116,13 +122,90 @@ namespace Rhetos.Mvc
         }
     }
 
-    public class MaxValueDateAttribute : ValidationAttribute
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public sealed class MaxValueDateAttribute : ValidationAttribute
     {
         public string MaxValue { get; set; }
 
         public override bool IsValid(object value)
         {
             return Convert.ToDateTime(value) <= Convert.ToDateTime(MaxValue);
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public sealed class LookupAttribute: Attribute
+    {
+        public string LookupTextField { get; set;}
+        public string LookupEntity { get; set; }
+        public string[] LookupColumns { get; set; }
+        public LookupType LookupType { get; set; }
+    }
+
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public sealed class StyleAttribute: Attribute
+    {
+        public int Width { get; set; }          
+    }
+        
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public sealed class RenderModeAttribute : Attribute
+    {
+        private RenderMode _renderMode = RenderMode.Any;
+        public RenderMode RenderMode { 
+            get{
+                return _renderMode;   
+            }
+            set {
+                _renderMode = value;
+            }
+        }
+
+        public RenderModeAttribute(RenderMode renderMode)
+        {
+            _renderMode = renderMode;
+        }
+    }
+
+    public enum RenderMode
+    {
+        Any,
+        EditModeOnly,
+        DisplayModeOnly,
+        None
+    }
+
+    public enum LookupType
+    {
+        DropDown,
+        AutoComplete,
+        ComboBox
+    }
+
+    public class LocalizedDisplayNameAttribute : DisplayNameAttribute
+    {
+        private readonly PropertyInfo nameProperty;
+
+        public LocalizedDisplayNameAttribute(string displayNameKey, Type resourceType = null)
+            : base(displayNameKey)
+        {
+            if (resourceType != null)
+            {
+                nameProperty = resourceType.GetProperty(base.DisplayName,
+                                               BindingFlags.Static | BindingFlags.Public);
+            }
+        }
+
+        public override string DisplayName
+        {
+            get
+            {
+                if (nameProperty == null)
+                {
+                    return base.DisplayName;
+                }
+                return (string)nameProperty.GetValue(nameProperty.DeclaringType, null);
+            }
         }
     }
 
@@ -143,7 +226,7 @@ namespace Rhetos.Mvc
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
             codeBuilder.InsertCode(CodeSnippet);
-
+           
             codeBuilder.AddReferencesFromDependency(typeof(Guid));
             codeBuilder.AddReferencesFromDependency(typeof(System.Linq.Enumerable));
         }

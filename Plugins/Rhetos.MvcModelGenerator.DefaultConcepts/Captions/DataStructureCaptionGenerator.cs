@@ -29,22 +29,18 @@ using Rhetos.MvcModelGenerator.Captions;
 namespace Rhetos.MvcModelGenerator.DefaultConcepts.Captions
 {
     [Export(typeof(ICaptionsGeneratorPlugin))]
-    [ExportMetadata(MefProvider.Implements, typeof(PropertyInfo))]
-    public class PropertyCaptionGenerator : ICaptionsGeneratorPlugin
+    [ExportMetadata(MefProvider.Implements, typeof(DataStructureInfo))]
+    public class DataStructureCaptionGenerator : ICaptionsGeneratorPlugin
     {
         private static readonly HashSet<string> GeneriraneKonstante = new HashSet<string>();
 
-        private static string GetPropertyType(PropertyInfo conceptInfo)
-        {
-            return MvcPropertyHelper.GetPropertyType(conceptInfo);
-        }
 
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
-            PropertyInfo info = (PropertyInfo)conceptInfo;
+            DataStructureInfo info = (DataStructureInfo)conceptInfo;
             string propertyName = CaptionHelper.GetCaptionConstant(info);
             string caption = CaptionHelper.GetCaption(info.Name);
-
+            
             string generiraniKod =
             @"  
               <data name=""" + propertyName + @""" xml:space=""preserve"">
@@ -55,11 +51,9 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts.Captions
             {
                 GeneriraneKonstante.Add(propertyName);
 
-                string propertyType = GetPropertyType(info);
-                if (!String.IsNullOrEmpty(propertyType) && DataStructureCodeGenerator.IsTypeSupported(info.DataStructure))
-                {
-                    codeBuilder.InsertCode(generiraniKod, MvcModelGeneratorTags.ModuleMembers);
-                }
+ 
+                codeBuilder.InsertCode(generiraniKod, MvcModelGeneratorTags.ModuleMembers);
+                
             }
         }
     }

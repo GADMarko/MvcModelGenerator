@@ -55,13 +55,13 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
             PropertyInfo info = (PropertyInfo)conceptInfo;
             string propertyType = GetPropertyType(info);
 
-            var imaDefiniranMaxLength = _dslModel.Concepts.OfType<MaxLengthInfo>().Any(
+            var hasMaxLength = _dslModel.Concepts.OfType<MaxLengthInfo>().Any(
                 maxLength => maxLength.Property.Name == info.Name 
                     && maxLength.Property.DataStructure.Name == info.DataStructure.Name
                     && maxLength.Property.DataStructure.Module.Name == info.DataStructure.Module.Name
                     );
 
-            string additionalTag = imaDefiniranMaxLength ? "" : ShortStringFormat;
+            string additionalTag = hasMaxLength ? "" : ShortStringFormat;
 
             if (!String.IsNullOrEmpty(propertyType) && DataStructureCodeGenerator.IsTypeSupported(info.DataStructure))
             {
