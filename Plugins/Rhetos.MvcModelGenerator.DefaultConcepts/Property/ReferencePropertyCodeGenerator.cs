@@ -25,6 +25,9 @@ using Rhetos.Dsl;
 using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.Extensibility;
 using Rhetos.MvcModelGenerator;
+using System.Collections.Generic;
+using System.Linq;
+using OmegaCommonConcepts;
 
 namespace Rhetos.MvcModelGenerator.DefaultConcepts
 {
@@ -40,19 +43,46 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
         }
 
         private const string ReferenceFormat = @"
-        //[AdditionalKendoMetadata(LookupField = {0}, LookupEntity = {1}, LookupType = KendoLookupType.ComboBox)]";
+        [Rhetos.Mvc.Lookup(LookupTextField = ""{0}"", LookupEntity = ""{1}"", LookupColumns = new string[] {{{2}}}, LookupType = Rhetos.Mvc.LookupType.DropDown)]";
 
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
             ReferencePropertyInfo info = (ReferencePropertyInfo)conceptInfo;
             if (DataStructureCodeGenerator.IsTypeSupported(info.DataStructure))
             {
-                string lookupField = info.Referenced.Name + ".PropertySifra";
-                string lookupEntity = info.Referenced.Name + ".Entity" + info.Referenced.Name;
 
-                string dodatniAtribut = string.Format(ReferenceFormat, lookupField, lookupEntity);
+
+                var properties = GetReferenceProperties(_dslModel.Concepts, info);
+
+                string lookupField = "";
+                var lookupColumns = new List<string>();
+
+                foreach (var prop in properties)
+                {
+
+                    lookupField = prop.Name;
+                    lookupColumns.Add("\"" + prop.Name + "\"");   
+                }
+
+
+                string lookupEntity = info.Referenced.Name;
+
+                //string dodatniAtribut = string.Format(ReferenceFormat, _dslModel.Concepts.Count(), lookupEntity, String.Join(", ", lookupColumns));
+                string dodatniAtribut = string.Format(ReferenceFormat, lookupField, lookupEntity, String.Join(", " , lookupColumns));
+                
+               
+
                 MvcPropertyHelper.GenerateCodeForType(_dslModel, info, codeBuilder, "Guid?", "ID", dodatniAtribut);
             }
+        }
+
+        private static IEnumerable<PropertyInfo> GetReferenceProperties(IEnumerable<IConceptInfo> existingConcepts, ReferencePropertyInfo property)
+        {
+
+            return existingConcepts.OfType<LookupVisibleInfo>()
+                   .Where(r => r.Property.DataStructure == property.Referenced).ToList()
+                   .Select(r => r.Property);
+
         }
 
     }

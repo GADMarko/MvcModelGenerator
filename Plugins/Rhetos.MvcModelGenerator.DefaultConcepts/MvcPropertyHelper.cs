@@ -14,8 +14,11 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
     {
         public static readonly CsTag<PropertyInfo> AttributeTag = "Attribute";
 
-        private const string EditFormHidden = @"
-        [AdditionalKendoMetadata(EditFormHidden = true)]";
+        private const string EditModeHidden = @"
+        [Rhetos.Mvc.RenderMode(Rhetos.Mvc.RenderMode.DisplayModeOnly)]";
+
+        private const string DisplayModeHidden = @"
+        [Rhetos.Mvc.RenderMode(Rhetos.Mvc.RenderMode.EditModeOnly)]";
 
         private const string DefaultAutocode = @"
         [DefaultValue(""+"")]";
@@ -27,11 +30,11 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
         {
             string captionName = CaptionHelper.GetCaptionConstant(info);
 
-            additionalTag = KreirajDodatneMvcAtribute(dslModel, info, additionalTag);
+            additionalTag = CreateAdditionalAttributes(dslModel, info, additionalTag);
 
             return string.Format(@"
         " + AttributeTag.Evaluate(info) + @"
-        [Display(Name = ""{3}"", ResourceType = typeof(Captions))]{4}
+        [Display(Name = ""{3}"", ResourceType = typeof(Captions), AutoGenerateFilter = true)]{4}
         public virtual {1} {0}{2} {{ get; set; }}
         public const string Property{0}{2} = ""{0}{2}"";
         ", info.Name, type, nameSuffix, captionName, additionalTag);
@@ -55,56 +58,62 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
             return null;
         }
 
-        public static string KreirajDodatneMvcAtribute(IDslModel dslModel, PropertyInfo info, string dodatniAtributi)
+        public static string CreateAdditionalAttributes(IDslModel dslModel, PropertyInfo info, string dodatniAtributi)
         {
-            HashSet<string> dodatniMvcAtributi = new HashSet<string>();
-            dodatniMvcAtributi.Add(SakrijPoljaDohvacenaPrekoLookupa(dslModel, info));
-            dodatniMvcAtributi.Add(SakrijDetailPolja(dslModel, info));
-            dodatniMvcAtributi.Add(KreirajDefaulte(dslModel, info));
+            HashSet<string> additionalMvcAttributes = new HashSet<string>();
+            additionalMvcAttributes.Add(HideLookupFields(dslModel, info));
+            additionalMvcAttributes.Add(HideDetailFields(dslModel, info));
+            additionalMvcAttributes.Add(CreateDefaultes(dslModel, info));
+            additionalMvcAttributes.Add(HideIdFields(dslModel, info));
 
-            dodatniMvcAtributi.Remove("");
+            additionalMvcAttributes.Remove("");
 
 
-            return dodatniAtributi + string.Join("", dodatniMvcAtributi);
+            return dodatniAtributi + string.Join("", additionalMvcAttributes);
         }
 
-        private static string KreirajDefaulte(IDslModel dslModel, PropertyInfo info)
+        private static string CreateDefaultes(IDslModel dslModel, PropertyInfo info)
         {
-            bool jeAutocode = dslModel.Concepts.OfType<AutoCodePropertyInfo>().Any(
+            bool isAutocode = dslModel.Concepts.OfType<AutoCodePropertyInfo>().Any(
                 p => p.Property.Name == info.Name && p.Property.DataStructure.Module.Name == info.DataStructure.Module.Name && p.Property.DataStructure.Name == info.DataStructure.Name);
 
-            if (jeAutocode) return DefaultAutocode;
+            if (isAutocode) return DefaultAutocode;
 
             if (info.Name.ToLower() == "active" && info is BoolPropertyInfo) return DefaultActive;
             return "";
         }
 
-        private static string SakrijDetailPolja(IDslModel dslModel, PropertyInfo info)
+        private static string HideDetailFields(IDslModel dslModel, PropertyInfo info)
         {
             string entityName = CaptionHelper.RemoveBrowseSufix(info.DataStructure.Name);
 
-            bool jeDetail = dslModel.Concepts.OfType<ReferenceDetailInfo>().Any(
+            bool isDetail = dslModel.Concepts.OfType<ReferenceDetailInfo>().Any(
                 d => d.Reference.Name == info.Name
                      && d.Reference.DataStructure.Name == entityName
                      && d.Reference.DataStructure.Module.Name == info.DataStructure.Module.Name);
 
-            if (jeDetail) return EditFormHidden;
+            if (isDetail) return EditModeHidden;
             return "";
         }
 
-        private static string SakrijPoljaDohvacenaPrekoLookupa(IDslModel dslModel, PropertyInfo info)
+        private static string HideLookupFields(IDslModel dslModel, PropertyInfo info)
         {
-            bool jeBrowse = info.DataStructure.Name.EndsWith("Browse");
-            if (jeBrowse)
+            bool isBrowse = info.DataStructure.Name.EndsWith("Browse");
+            if (isBrowse)
             {
                 string dataStructureName = CaptionHelper.RemoveBrowseSufix(info.DataStructure.Name);
 
-                bool postojiUBaznomEntitetu = dslModel.Concepts.OfType<PropertyInfo>().Any(
+                bool existsInBaseEntitety = dslModel.Concepts.OfType<PropertyInfo>().Any(
                     p => p.DataStructure.Name == dataStructureName && p.Name == info.Name && p.DataStructure.Module.Name == info.DataStructure.Module.Name);
 
-                if (!postojiUBaznomEntitetu) return EditFormHidden;
+                if (!existsInBaseEntitety) return EditModeHidden;
             }
             return "";
+        }
+
+        private static string HideIdFields(IDslModel dslModel, PropertyInfo info)
+        {
+            return info.Name.EndsWith("ID") ? DisplayModeHidden : "";
         }
     }
 }

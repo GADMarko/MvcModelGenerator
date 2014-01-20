@@ -42,7 +42,7 @@ namespace Rhetos.MvcModelGenerator.DefaultConcepts
             return string.Format(@"
 namespace Omega.MvcModel.{0} 
 {{ 
-    [DisplayName(""{3}"")]
+    [Rhetos.Mvc.LocalizedDisplayName(""{3}"", {4})]
     public partial class {1} : Rhetos.Mvc.BaseMvcModel
     {{
         public const string Entity{1} = ""{1}"";
@@ -55,7 +55,11 @@ namespace Omega.MvcModel.{0}
                 info.Module.Name, 
                 info.Name, 
                 ClonePropertiesTag.Evaluate(info),
-                CaptionHelper.GetCaption(dataStructureBezBrowsea));
+                CaptionHelper.GetCaptionConstant(info),
+                "typeof(Captions)"
+                );
+           
+          
         }
 
         private static bool _isInitialCallMade;
